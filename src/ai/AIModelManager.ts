@@ -10,17 +10,15 @@ export class AIModelManager {
     private llmProvider: HTTPAIProvider | undefined;
     private embeddingProvider: HTTPAIProvider | undefined;
 
-    constructor(settings: SynapseSettings, pluginDir: string) { // Add pluginDir parameter
+    constructor(settings: SynapseSettings, pluginDir: string) {
         this.settings = settings;
-        this.modelConfigManager = new ModelConfigManager(pluginDir); // Use pluginDir here
-        // Use 'openai-gpt' as the default if no LLM model name is specified in settings
-        this.setCurrentLLMConfig(settings.modelConfigName || 'openai-gpt');
-        // Use 'openai-embed' as the default if no embedding model name is specified in settings
-        this.setCurrentEmbeddingConfig(settings.embeddingModelName || 'openai-embed');
+        this.modelConfigManager = new ModelConfigManager(pluginDir);
+        this.setCurrentLLMConfig();
+        this.setCurrentEmbeddingConfig();
     }
 
-    public setCurrentLLMConfig(name: string) {
-        this.currentLLMConfig = this.modelConfigManager.getLLMConfigByName(name);
+    public setCurrentLLMConfig() {
+        this.currentLLMConfig = this.modelConfigManager.getLLMConfig();
         if (this.currentLLMConfig) {
             this.llmProvider = new HTTPAIProvider(this.currentLLMConfig, this.settings);
         } else {
@@ -28,8 +26,8 @@ export class AIModelManager {
         }
     }
 
-    public setCurrentEmbeddingConfig(name: string) {
-        this.currentEmbeddingConfig = this.modelConfigManager.getEmbeddingConfigByName(name);
+    public setCurrentEmbeddingConfig() {
+        this.currentEmbeddingConfig = this.modelConfigManager.getEmbeddingConfig();
         if (this.currentEmbeddingConfig) {
             this.embeddingProvider = new HTTPAIProvider(this.currentEmbeddingConfig, this.settings);
         } else {
@@ -39,14 +37,16 @@ export class AIModelManager {
 
     // LLM请求
     async callLLM(task: string, payload: any): Promise<any> {
-        if (!this.llmProvider) throw new Error('No LLM model config selected');
-        return this.llmProvider.callAPI(task, payload);
+        if (!this.llmProvider || !this.currentLLMConfig) throw new Error('No LLM model config selected');
+        const endpoint = this.modelConfigManager.getChatEndpoint(this.currentLLMConfig);
+        return this.llmProvider.callAPI(task, payload, endpoint);
     }
 
     // Embedding请求
     async callEmbedding(task: string, payload: any): Promise<any> {
-        if (!this.embeddingProvider) throw new Error('No embedding model config selected');
-        return this.embeddingProvider.callAPI(task, payload);
+        if (!this.embeddingProvider || !this.currentEmbeddingConfig) throw new Error('No embedding model config selected');
+        const endpoint = this.modelConfigManager.getEmbeddingEndpoint(this.currentEmbeddingConfig);
+        return this.embeddingProvider.callAPI(task, payload, endpoint);
     }
 
     async initialize() {
@@ -79,5 +79,26 @@ export class AIModelManager {
     // Public getter for the current embedding model config
     public getCurrentEmbeddingConfig(): ModelConfig | undefined {
         return this.currentEmbeddingConfig;
+    }
+
+    // 验证API Key有效性（通用，自动用当前模型验证endpoint）
+    public async validateApiKey(key: string): Promise<'valid' | 'invalid' | 'network-error'> {
+        const config = this.getCurrentLLMConfig();
+        if (!config) return 'invalid';
+        const endpoint = this.modelConfigManager.getValidationEndpoint(config);
+        if (!endpoint) return 'invalid';
+        let headers: Record<string, string> = {};
+        if (config.provider === 'openai') {
+            headers = { 'Authorization': `Bearer ${key}` };
+        } else if (config.provider === 'azure') {
+            headers = { 'api-key': key };
+        }
+        try {
+            const resp = await fetch(endpoint, { headers });
+            if (resp.ok) return 'valid';
+            return 'invalid';
+        } catch (e) {
+            return 'network-error';
+        }
     }
 }

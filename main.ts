@@ -273,8 +273,8 @@ export default class SynapsePlugin extends Plugin {
         if (this.modelManager) {
             // Update the model config in AIModelManager if the name changed
             // AIModelManager needs to update its internal provider based on the new settings
-            this.modelManager.setCurrentLLMConfig(this.settings.modelConfigName || '');
-            this.modelManager.setCurrentEmbeddingConfig(this.settings.embeddingModelName || '');
+            this.modelManager.setCurrentLLMConfig();
+            this.modelManager.setCurrentEmbeddingConfig();
 
             // Update settings in EmbeddingGenerator and ResponseGenerator
             // These instances need the new settings to potentially change behavior (e.g., model name, dimension)
@@ -315,18 +315,25 @@ export default class SynapsePlugin extends Plugin {
         if (leaves.length > 0) {
             leaf = leaves[0];
         } else {
+            // Check if workspace root is available before calling getRightLeaf
+            // (Obsidian's workspace.rootSplit is the root; if null, workspace is not ready)
+            // @ts-ignore
+            if (!workspace.rootSplit) {
+                new Notice('Obsidian workspace is not ready. Please try again in a moment.');
+                return;
+            }
             // Try to get an existing right leaf first (will return null if none exists)
             leaf = workspace.getRightLeaf(false);
             // If no existing right leaf, create a new one
             if (!leaf) {
-                 leaf = workspace.getRightLeaf(true); // Pass true to create if it doesn't exist
+                leaf = workspace.getRightLeaf(true); // Pass true to create if it doesn't exist
             }
 
             // If a leaf was found or created, set its view state
             if (leaf) {
                 await leaf.setViewState({ type: viewType, active: true });
             }
-        } // Removed the 'else' block that was causing the TypeError
+        }
 
         // Reveal the leaf if it exists
         if (leaf) {

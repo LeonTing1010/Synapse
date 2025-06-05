@@ -11,9 +11,7 @@
     "lint": "eslint src --ext .ts,.tsx",
     "format": "prettier --write src",
     "css:build": "postcss styles.css -o dist/styles.css",
-    "css:watch": "postcss styles.css -o dist/styles.css --watch",
-    "release:zip": "npm run build && rm -rf release-dist && mkdir -p release-dist && cp dist/main.js dist/manifest.json dist/styles.css dist/openai.json release-dist/ && cd release-dist && zip synapse-obsidian-$npm_package_version.zip main.js manifest.json styles.css openai.json",
-    "release:publish": "npm run release:zip && gh release create $npm_package_version ./release-dist/synapse-obsidian-$npm_package_version.zip --title \"$npm_package_version\" --notes 'Release $npm_package_version: AI-powered knowledge connection and insight discovery for Obsidian. Includes main.js, manifest.json, styles.css, openai.json for plugin installation.' && rm -rf release-dist"
+    "css:watch": "postcss styles.css -o dist/styles.css --watch"
   },
   "keywords": [
     "obsidian",
@@ -44,13 +42,8 @@
     "typescript": "4.7.4"
   },
   "dependencies": {
-    "chromadb": "^1.5.0",
     "compromise": "^14.10.0",
-    "d3": "^7.8.0",
     "fuse.js": "^6.6.2",
-    "ml-matrix": "^6.10.4",
-    "natural": "^6.5.0",
-    "similarity": "^1.2.1",
-    "@huggingface/inference": "^2.5.0"
+    "similarity": "^1.2.1"
   }
 }

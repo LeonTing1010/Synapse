@@ -12,10 +12,9 @@ export class HTTPAIProvider {
         this.settings = settings;
     }
 
-    async callAPI(task: string, payload: any): Promise<any> {
-        // Use the full endpoint directly from config
-        const url = this.config.endpoint;
-        if (!url) throw new Error('No endpoint in model config');
+    async callAPI(task: string, payload: any, endpoint: string): Promise<any> {
+        const url = endpoint;
+        if (!url) throw new Error('No endpoint provided');
 
         const headers: Record<string, string> = { 'Content-Type': 'application/json' };
         // Attach API key if needed (from settings, not models.json)

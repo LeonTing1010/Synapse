@@ -1,20 +1,10 @@
 {
-  "llm": [
-    {
-      "name": "openai-gpt",
-      "provider": "openai",
-      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
-      "model": "qwen-vl-plus"
-    }
-  ],
-  "embedding": [
-    {
-      "name": "openai-embed",
-      "provider": "openai",
-      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings",
-      "model": "text-embedding-v1"
-    }
-  ]
+  "provider": "openai",
+  "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "models": {
+    "llm": "qwen-vl-plus",
+    "embedding": "text-embedding-v1"
+  }
 }
 
 

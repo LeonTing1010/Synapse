@@ -91,4 +91,21 @@ input.synapse-search-input:focus, textarea.synapse-input-field:focus {
   border: 1.5px solid var(--interactive-accent);
 }
 
+/* OpenAI Key 验证状态样式 */
+.openai-key-status, .synapse-key-status {
+  font-size: 0.85em;
+  margin-top: 4px;
+  display: block;
+  min-height: 1.5em;
+}
+.synapse-key-success {
+  color: var(--color-green, green);
+}
+.synapse-key-error {
+  color: var(--color-red, red);
+}
+.synapse-key-warn {
+  color: var(--color-orange, orange);
+}
+
 /* 结果区、分区、标签等可在各自 css 文件细化 */

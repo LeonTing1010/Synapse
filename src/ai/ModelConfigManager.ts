@@ -5,23 +5,19 @@ import * as path from 'path';
 export interface ModelConfig {
   name: string;
   provider: string;
-  model?: string;
-  endpoint?: string;
-  // ...other fields as needed
-}
-
-interface ModelGroup {
-  llm: ModelConfig[];
-  embedding: ModelConfig[];
+  model: string;
+  baseUrl: string;
+  type: 'llm' | 'embedding';
 }
 
 export class ModelConfigManager {
   private llmConfigs: ModelConfig[] = [];
   private embeddingConfigs: ModelConfig[] = [];
   private configPath: string;
+  private provider: string = '';
+  private baseUrl: string = '';
 
   constructor(baseDir: string) {
-    // 优先 openai.json，没有则用 models.json
     const openaiPath = path.join(baseDir, 'openai.json');
     const modelsPath = path.join(baseDir, 'models.json');
     if (fs.existsSync(openaiPath)) {
@@ -33,23 +29,39 @@ export class ModelConfigManager {
   }
 
   private loadConfigs() {
-    // [ModelConfigManager] Remove or comment out all console.log for production cleanliness
-    // console.log(`[ModelConfigManager] Attempting to load config from: ${this.configPath}`);
     if (fs.existsSync(this.configPath)) {
-      // console.log(`[ModelConfigManager] Found config file: ${this.configPath}`);
       const raw = fs.readFileSync(this.configPath, 'utf-8');
       try {
-        const parsed: ModelGroup = JSON.parse(raw);
-        this.llmConfigs = parsed.llm || [];
-        this.embeddingConfigs = parsed.embedding || [];
-        // console.log(`[ModelConfigManager] Successfully loaded ${this.llmConfigs.length} LLM and ${this.embeddingConfigs.length} embedding configs.`);
+        const parsed = JSON.parse(raw);
+        this.provider = parsed.provider;
+        this.baseUrl = parsed.baseUrl;
+        this.llmConfigs = [];
+        this.embeddingConfigs = [];
+        if (parsed.models.llm) {
+          this.llmConfigs.push({
+            name: 'llm',
+            provider: parsed.provider,
+            model: parsed.models.llm,
+            baseUrl: parsed.baseUrl,
+            type: 'llm'
+          });
+        }
+        if (parsed.models.embedding) {
+          this.embeddingConfigs.push({
+            name: 'embedding',
+            provider: parsed.provider,
+            model: parsed.models.embedding,
+            baseUrl: parsed.baseUrl,
+            type: 'embedding'
+          });
+        }
       } catch (e) {
-        console.error('[ModelConfigManager] Failed to parse models.json:', e);
+        console.error('[ModelConfigManager] Failed to parse config:', e);
         this.llmConfigs = [];
         this.embeddingConfigs = [];
       }
     } else {
-      console.warn(`[ModelConfigManager] models.json not found at: ${this.configPath}`);
+      console.warn(`[ModelConfigManager] config not found at: ${this.configPath}`);
     }
   }
 
@@ -61,23 +73,21 @@ export class ModelConfigManager {
     return this.embeddingConfigs;
   }
 
-  getLLMConfigByName(name: string): ModelConfig | undefined {
-    const config = this.llmConfigs.find(cfg => cfg.name === name);
-    // console.log(`[ModelConfigManager] getLLMConfigByName(${name}) returned:`, config);
-    return config;
+  getLLMConfig(): ModelConfig | undefined {
+    return this.llmConfigs[0];
   }
 
-  getEmbeddingConfigByName(name: string): ModelConfig | undefined {
-    const config = this.embeddingConfigs.find(cfg => cfg.name === name);
-    // console.log(`[ModelConfigManager] getEmbeddingConfigByName(${name}) returned:`, config);
-    return config;
+  getEmbeddingConfig(): ModelConfig | undefined {
+    return this.embeddingConfigs[0];
   }
 
-  getLLMConfigsByProvider(provider: string): ModelConfig[] {
-    return this.llmConfigs.filter(cfg => cfg.provider === provider);
+  getValidationEndpoint(config: ModelConfig): string {
+    return config.baseUrl.replace(/\/$/, '') + '/models';
   }
-
-  getEmbeddingConfigsByProvider(provider: string): ModelConfig[] {
-    return this.embeddingConfigs.filter(cfg => cfg.provider === provider);
+  getChatEndpoint(config: ModelConfig): string {
+    return config.baseUrl.replace(/\/$/, '') + '/chat/completions';
+  }
+  getEmbeddingEndpoint(config: ModelConfig): string {
+    return config.baseUrl.replace(/\/$/, '') + '/embeddings';
   }
 }

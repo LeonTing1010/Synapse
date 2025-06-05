@@ -49,25 +49,22 @@ export class SynapseSettingsTab extends PluginSettingTab {
         const prev = parentEl.querySelector('.openai-key-status');
         if (prev) prev.remove();
         if (!key || !key.startsWith('sk-')) return;
-        const statusEl = parentEl.createDiv({ cls: 'openai-key-status' });
+        const statusEl = parentEl.createDiv({ cls: 'openai-key-status synapse-key-status' });
         statusEl.setText('Validating OpenAI API Key...');
-        statusEl.style.fontSize = '0.85em';
-        statusEl.style.marginTop = '4px';
-        statusEl.style.display = 'block';
-        try {
-            const resp = await fetch('https://api.openai.com/v1/models', {
-                headers: { 'Authorization': `Bearer ${key}` }
-            });
-            if (resp.ok) {
-                statusEl.setText('✅ OpenAI API Key is valid.');
-                statusEl.style.color = 'var(--color-green,green)';
-            } else {
-                statusEl.setText('❌ Invalid OpenAI API Key.');
-                statusEl.style.color = 'var(--color-red,red)';
-            }
-        } catch (e) {
+        // 直接调用AIModelManager的验证方法
+        const result = await this.plugin.modelManager.validateApiKey(key);
+        if (result === 'valid') {
+            statusEl.setText('✅ OpenAI API Key is valid.');
+            statusEl.classList.remove('synapse-key-error', 'synapse-key-warn');
+            statusEl.classList.add('synapse-key-success');
+        } else if (result === 'invalid') {
+            statusEl.setText('❌ Invalid OpenAI API Key.');
+            statusEl.classList.remove('synapse-key-success', 'synapse-key-warn');
+            statusEl.classList.add('synapse-key-error');
+        } else {
             statusEl.setText('⚠️ Network error, unable to verify key.');
-            statusEl.style.color = 'var(--color-orange,orange)';
+            statusEl.classList.remove('synapse-key-success', 'synapse-key-error');
+            statusEl.classList.add('synapse-key-warn');
         }
     }
 

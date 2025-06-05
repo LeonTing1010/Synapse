@@ -1,18 +1,8 @@
 {
-  "llm": [
-    {
-      "name": "openai-gpt",
-      "provider": "openai",
-      "endpoint": "https://api.openai.com/v1/chat/completions",
-      "model": "gpt-3.5-turbo"
-    }
-  ],
-  "embedding": [
-    {
-      "name": "openai-embed",
-      "provider": "openai",
-      "endpoint": "https://api.openai.com/v1/embeddings",
-      "model": "text-embedding-ada-002"
-    }
-  ]
+  "provider": "openai",
+  "baseUrl": "https://api.openai.com/v1",
+  "models": {
+    "llm": "gpt-3.5-turbo",
+    "embedding": "text-embedding-ada-002"
+  }
 }
