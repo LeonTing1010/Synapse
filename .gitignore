@@ -137,3 +137,4 @@ dist
 
 # Ignore all files in docs directory
 /docs/*
+/docs/
