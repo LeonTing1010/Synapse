@@ -1,0 +1,111 @@
+/* 通用工具类、动画、响应式等 */
+.synapse-hidden {
+    display: none !important;
+}
+
+.synapse-invisible {
+    visibility: hidden;
+}
+
+.synapse-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.synapse-text-center {
+    text-align: center;
+}
+
+.synapse-text-muted {
+    color: var(--text-muted);
+}
+
+.synapse-text-accent {
+    color: var(--text-accent);
+}
+
+.synapse-mb-small {
+    margin-bottom: 8px;
+}
+
+.synapse-mb-medium {
+    margin-bottom: 16px;
+}
+
+.synapse-mb-large {
+    margin-bottom: 24px;
+}
+
+@keyframes synapse-fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes synapse-slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes synapse-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.synapse-fade-in {
+    animation: synapse-fadeIn 0.3s ease-in-out;
+}
+
+.synapse-slide-in {
+    animation: synapse-slideIn 0.3s ease-out;
+}
+
+.synapse-pulse {
+    animation: synapse-pulse 2s infinite;
+}
+
+/* 通用工具类 */
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+.gap-8 {
+  gap: 8px;
+}
+.gap-16 {
+  gap: 16px;
+}
+.mt-8 {
+  margin-top: 8px;
+}
+.mt-16 {
+  margin-top: 16px;
+}
+.mb-8 {
+  margin-bottom: 8px;
+}
+.mb-16 {
+  margin-bottom: 16px;
+}
+.text-center {
+  text-align: center;
+}
+
+/* 滚动条样式、响应式等可继续补充 */

@@ -1,0 +1,474 @@
+/* 主容器 */
+.synapse-chat-view {
+  background: var(--background-primary);
+  color: var(--text-normal);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-size: var(--font-ui-medium);
+}
+
+/* 顶部标题 */
+.synapse-chat-header {
+  padding: 16px 20px 8px 20px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  font-weight: 600;
+  font-size: 1.2em;
+  color: var(--text-normal);
+}
+
+/* 聊天消息区 */
+.synapse-chat-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 20px 10px 20px;
+  background: var(--background-primary);
+}
+
+/* 气泡样式 */
+.synapse-chat-message {
+  width: 100%;
+  /* 移除 max-width 限制 */
+  max-width: unset;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.synapse-message-user .message-content {
+  background: var(--background-secondary-alt);
+  color: var(--text-normal);
+  align-self: flex-end;
+  border-radius: 16px 16px 4px 16px;
+}
+
+.synapse-message-ai .message-content {
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  align-self: flex-start;
+  border-radius: 16px 16px 16px 4px;
+}
+
+.message-content {
+  padding: 12px 16px;
+  margin-bottom: 2px;
+  max-width: 80%;
+  box-shadow: var(--shadow-s);
+  word-break: break-word;
+  font-size: 1em;
+  line-height: 1.6;
+}
+
+/* 输入区 */
+.synapse-chat-input-row {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  border-top: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+}
+
+.synapse-input-field {
+  flex: 1;
+  resize: none;
+  border: none;
+  outline: none;
+  background: var(--background-primary);
+  color: var(--text-normal);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 1em;
+  margin-right: 10px;
+  box-shadow: var(--shadow-s);
+  min-height: 36px;
+  max-height: 120px;
+}
+
+.synapse-send-icon {
+  font-size: 1.5em;
+  color: var(--interactive-accent);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+.synapse-send-icon:hover, .synapse-send-icon:focus {
+  background: var(--background-modifier-hover);
+}
+
+/* 上下文面板 */
+.synapse-context-panel {
+  background: var(--background-secondary-alt);
+  color: var(--text-muted);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 18px;
+  font-size: 0.98em;
+  box-shadow: var(--shadow-xs);
+}
+
+.synapse-note-snippet {
+  color: var(--text-faint);
+  font-size: 0.95em;
+  margin: 4px 0 8px 0;
+  padding-left: 2px;
+}
+
+.synapse-source-link {
+  color: var(--interactive-accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.synapse-source-link:hover {
+  text-decoration: underline dotted;
+}
+
+/* 建议列表 */
+.synapse-suggestion-list {
+  margin: 8px 0 0 0;
+  padding: 0;
+  list-style: none;
+}
+.synapse-suggestion-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  background: var(--background-secondary-alt);
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+.synapse-suggestion-text {
+  flex: 1;
+  color: var(--text-normal);
+}
+.synapse-apply-button {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: 5px;
+  padding: 3px 12px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 0.98em;
+  transition: background 0.2s;
+}
+.synapse-apply-button:hover {
+  background: var(--interactive-accent-hover);
+}
+
+/* --- Obsidian-style Suggestion Card UI --- */
+.synapse-suggestion-list-obsidian {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* 移除 max-width 限制 */
+  max-width: unset;
+}
+
+.synapse-suggestion-card {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--background-secondary-alt);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  /* 移除 max-width 限制 */
+  max-width: unset;
+  margin: 0;
+  /* 可选：让内容自动换行 */
+  word-break: break-word;
+}
+.synapse-suggestion-card:hover {
+  background: var(--background-modifier-hover);
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-m);
+}
+.synapse-suggestion-icon {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+.synapse-suggestion-text {
+  flex: 1;
+  color: var(--text-normal);
+  font-size: 1em;
+  line-height: 1.6;
+  word-break: break-word;
+}
+.synapse-apply-button-obsidian {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 18px;
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: var(--shadow-xs);
+  margin-left: 10px;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.synapse-apply-button-obsidian:hover, .synapse-apply-button-obsidian:focus {
+  background: var(--interactive-accent-hover);
+  box-shadow: var(--shadow-m);
+  outline: none;
+}
+
+/* 批量操作区 */
+.synapse-batch-group {
+  background: var(--background-secondary-alt);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 10px 0;
+}
+.synapse-batch-actions {
+  margin-top: 6px;
+}
+.synapse-batch-actions button {
+  margin-right: 8px;
+}
+
+/* 代码块、引用等 */
+.message-content code, .synapse-note-snippet code {
+  background: var(--background-modifier-form-field);
+  color: var(--code-normal);
+  border-radius: 4px;
+  padding: 2px 5px;
+  font-size: 0.97em;
+}
+
+/* AI 打字指示器 */
+.synapse-typing-indicator {
+  color: var(--text-faint);
+  font-style: italic;
+  margin: 8px 0 0 8px;
+  font-size: 0.98em;
+}
+
+/* Slash Menu Styles */
+.synapse-slash-menu {
+    background-color: var(--background-primary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--size-2-1);
+    box-shadow: var(--shadow-elevation-2);
+    padding: var(--size-2-2) 0;
+    max-height: 200px; /* Limit height and enable scrolling */
+    overflow-y: auto;
+    z-index: 9999; /* Ensure it's above other elements */
+    font-size: var(--font-ui-small);
+    color: var(--text-normal);
+    /* Basic fade-in animation */
+    opacity: 0;
+    transform: translateY(5px);
+    animation: fadeInSlashMenu 0.2s ease-out forwards;
+}
+
+.synapse-slash-menu-item {
+    padding: var(--size-2-3) var(--size-4-4);
+    cursor: pointer;
+    transition: background-color 0.1s ease-in-out;
+    white-space: nowrap; /* Prevent text wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add ellipsis for overflow */
+}
+
+.synapse-slash-menu-item.active,
+.synapse-slash-menu-item:hover {
+    background-color: var(--background-modifier-hover);
+    color: var(--text-accent);
+}
+
+/* Keyframes for fade-in animation */
+@keyframes fadeInSlashMenu {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message-sources.synapse-obsidian-quote {
+  margin-top: 8px;
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.synapse-source-block {
+  background: var(--background-modifier-hover);
+  border-left: 3px solid var(--color-accent);
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  font-family: var(--font-interface);
+  margin: 0;
+  padding: 8px 16px;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  line-height: 1.7;
+}
+
+.synapse-source-label {
+  font-weight: 500;
+  color: var(--text-faint);
+  margin-right: 4px;
+}
+
+.synapse-source-sep {
+  color: var(--text-faint);
+  margin: 0 4px;
+}
+
+.synapse-source-block .internal-link {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0 2px;
+  border-radius: 3px;
+  transition: background 0.15s;
+}
+.synapse-source-block .internal-link:hover {
+  background: var(--background-modifier-active-hover);
+  text-decoration: underline;
+}
+
+/* --- Synapse Chat Message Actions --- */
+.synapse-message-actions {
+  display: flex;
+  gap: 0.5em;
+  margin-bottom: 0.25em;
+  justify-content: flex-end;
+  align-items: center;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.synapse-chat-message:hover .synapse-message-actions,
+.synapse-chat-message:focus-within .synapse-message-actions {
+  opacity: 1;
+}
+.synapse-action-btn {
+  background: none;
+  border: none;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  color: var(--text-muted);
+  transition: background 0.15s, color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  outline: none;
+}
+.synapse-action-btn:focus {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+.synapse-action-btn:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+/* --- Synapse Chat Message Action Icons --- */
+.synapse-copy-btn.icon-copy {
+  width: 1.2em;
+  height: 1.2em;
+  mask: url('data:image/svg+xml;utf8,<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="9" y="9" width="13" height="13" rx="2" stroke="%23000" stroke-width="2"/><rect x="3" y="3" width="13" height="13" rx="2" fill="none" stroke="%23000" stroke-width="2"/></svg>') center/contain no-repeat;
+  background: currentColor;
+  display: inline-block;
+}
+.synapse-copy-btn.copied {
+  color: var(--color-green);
+  animation: synapse-copied-pop 0.5s;
+}
+@keyframes synapse-copied-pop {
+  0% { transform: scale(1); }
+  60% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+.synapse-followup-btn.icon-followup {
+  width: 1.2em;
+  height: 1.2em;
+  mask: url('data:image/svg+xml;utf8,<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M21 11.5a8.38 8.38 0 0 1-1.9 5.4c-1.5 1.9-4 3.1-7.1 3.1-1.2 0-2.3-.2-3.3-.6l-4.2 1.1 1.1-4.2c-.4-1-.6-2.1-.6-3.3 0-3.1 1.2-5.6 3.1-7.1A8.38 8.38 0 0 1 12.5 3c4.7 0 8.5 3.8 8.5 8.5z" stroke="%23000" stroke-width="2"/></svg>') center/contain no-repeat;
+  background: currentColor;
+  display: inline-block;
+}
+
+/* Accessibility: visually hidden text for screen readers */
+.synapse-action-btn[aria-label]::after {
+  content: attr(aria-label);
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* --- Synapse Suggestion Icon Masks --- */
+.icon-tag {
+  width: 1.2em;
+  height: 1.2em;
+  mask: url('data:image/svg+xml;utf8,<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M2 12l10 10 10-10V2H2v10z" stroke="%23000" stroke-width="2" fill="none"/><circle cx="7" cy="7" r="2" fill="%23000"/></svg>') center/contain no-repeat;
+  background: currentColor;
+}
+.icon-link {
+  width: 1.2em;
+  height: 1.2em;
+  mask: url('data:image/svg+xml;utf8,<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M10 13a5 5 0 0 1 7.07 0l2.12 2.12a5 5 0 0 1-7.07 7.07l-2.12-2.12" stroke="%23000" stroke-width="2" fill="none"/><path d="M14 11a5 5 0 0 0-7.07 0l-2.12 2.12a5 5 0 0 0 7.07 7.07l2.12-2.12" stroke="%23000" stroke-width="2" fill="none"/></svg>') center/contain no-repeat;
+  background: currentColor;
+}
+.icon-property {
+  width: 1.2em;
+  height: 1.2em;
+  mask: url('data:image/svg+xml;utf8,<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="4" width="16" height="16" rx="3" stroke="%23000" stroke-width="2" fill="none"/><path d="M8 8h8v8H8z" stroke="%23000" stroke-width="2" fill="none"/></svg>') center/contain no-repeat;
+  background: currentColor;
+}
+
+/* Synapse Chat custom styles */
+
+.synapse-input-relative {
+  position: relative;
+}
+
+.synapse-slash-menu {
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  margin-bottom: 8px;
+  z-index: 9999;
+  background: var(--background-secondary, #222);
+  color: var(--text-normal, #fff);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  min-width: 220px;
+  max-width: 320px;
+  padding: 4px 0;
+  font-size: 0.95em;
+  border: 1px solid var(--background-modifier-border, #444);
+}
+
+.synapse-slash-menu-item {
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.synapse-slash-menu-item.active,
+.synapse-slash-menu-item:hover {
+  background: var(--background-modifier-hover, #333);
+  color: var(--text-accent, #4ea1f7);
+}

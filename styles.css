@@ -1,0 +1,15 @@
+/* Synapse Plugin Styles */
+/*
+ * 拆分说明：
+ * - styles/core.css        通用基础样式
+ * - styles/chat.css        AI 聊天相关样式
+ * - styles/utilities.css   工具类/动画/响应式等
+ *
+ * 开发时只需关注对应模块的 CSS 文件。
+ * 打包/发布时建议用构建工具合并所有 CSS。
+ */
+@import url('./styles/core.css');
+@import url('./styles/chat.css');
+@import url('./styles/utilities.css');
+
+/* 旧内容可逐步迁移到对应子文件，保持主文件整洁。 */

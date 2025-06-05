@@ -1,0 +1,11 @@
+{
+  "id": "synapse-ai-connector",
+  "name": "Synapse: AI Knowledge Connector",
+  "version": "0.2.0",
+  "minAppVersion": "0.15.0",
+  "description": "AI-powered knowledge connection and insight amplifier for Obsidian",
+  "author": "Synapse Team",
+  "authorUrl": "https://github.com/synapse-ai",
+  "fundingUrl": "https://github.com/sponsors/synapse-ai",
+  "isDesktopOnly": false
+}
