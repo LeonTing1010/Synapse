@@ -1,5 +1,6 @@
 import { Vault, DataAdapter } from 'obsidian';
 import { ensureParentDirectory } from './StorageUtils';
+import { Logger } from '../utils/Logger';
 
 // Define a type for ChunkRef based on the structure used in VectorSearchEngine
 interface ChunkRef {
@@ -39,7 +40,7 @@ export class VectorIndexManager {
             await this.vault.adapter.write(indexPath, JSON.stringify(indexData, null, 2));
             this.inMemoryIndex = indexData.chunks; // Update in-memory cache on save
         } catch (error) {
-            console.error('Error saving vector index:', error);
+            Logger.error('Error saving vector index:', error);
             throw error;
         }
     }
@@ -68,7 +69,7 @@ export class VectorIndexManager {
                  return null;
             }
         } catch (error) {
-            console.error('Error getting vector index:', error);
+            Logger.error('Error getting vector index:', error);
             this.inMemoryIndex = []; // Cache empty index on error
             return null;
         }
@@ -83,10 +84,10 @@ export class VectorIndexManager {
             if (exists) {
                 await adapter.remove(vectorIndexPath);
                 this.inMemoryIndex = []; // Clear in-memory cache on delete
-                console.log(`[VectorIndexManager] Deleted vector index file: ${vectorIndexPath}`);
+                Logger.log(`Deleted vector index file: ${vectorIndexPath}`);
             }
         } catch (e) {
-            console.error(`Error deleting vector index file ${vectorIndexPath}:`, e);
+            Logger.error(`Error deleting vector index file ${vectorIndexPath}:`, e);
             throw e;
         }
     }
@@ -98,7 +99,7 @@ export class VectorIndexManager {
             if (!this.inMemoryIndex) {
                 await this.getVectorIndex();
                 if (!this.inMemoryIndex) {
-                    console.warn('[VectorIndexManager] Vector index is empty or could not be loaded.');
+                    Logger.warn('Vector index is empty or could not be loaded.');
                     return [];
                 }
             }
@@ -113,7 +114,7 @@ export class VectorIndexManager {
                 const filePath = chunkEntry.filePath; // Get filePath from chunkEntry
 
                 if (!embedding || !filePath) {
-                    console.warn(`[VectorIndexManager] Missing embedding or filePath for chunk index ${idx} in fileId ${fileId}. Skipping chunk.`);
+                    Logger.warn(`Missing embedding or filePath for chunk index ${idx} in fileId ${fileId}. Skipping chunk.`);
                     continue;
                 }
 
@@ -181,17 +182,17 @@ export class VectorIndexManager {
                         this.inMemoryIndex.push(chunkRef);
                         added++;
                     } else {
-                        console.warn(`[VectorIndexManager] Embedding not found in provided chunkRef for chunk index ${chunkRef.chunkIndex} in fileId ${fileId}. Skipping.`);
+                        Logger.warn(`Embedding not found in provided chunkRef for chunk index ${chunkRef.chunkIndex} in fileId ${fileId}. Skipping.`);
                     }
                 }
             }
 
             // Save the updated index to disk
             await this.saveVectorIndex({ chunks: this.inMemoryIndex, lastUpdated: Date.now() });
-            console.log(`[VectorIndexManager] Updated vector index for fileId: ${fileId}. Chunks added: ${added}`);
+            Logger.log(`Updated vector index for fileId: ${fileId}. Chunks added: ${added}`);
 
         } catch (error) {
-            console.error(`Error updating vector index for fileId ${fileId}:`, error);
+            Logger.error(`Error updating vector index for fileId ${fileId}:`, error);
             throw error; // Re-throw to indicate failure
         }
     }
@@ -213,13 +214,13 @@ export class VectorIndexManager {
             if (removedCount > 0) {
                  // Save the updated index to disk only if something was removed
                 await this.saveVectorIndex({ chunks: this.inMemoryIndex, lastUpdated: Date.now() });
-                console.log(`[VectorIndexManager] Removed ${removedCount} vector index entries for fileId: ${fileId}. Total chunks: ${this.inMemoryIndex.length}`);
+                Logger.log(`Removed ${removedCount} vector index entries for fileId: ${fileId}. Total chunks: ${this.inMemoryIndex.length}`);
             } else {
-                 console.log(`[VectorIndexManager] No vector index entries found for fileId: ${fileId}. No save needed.`);
+                 Logger.log(`No vector index entries found for fileId: ${fileId}. No save needed.`);
             }
 
         } catch (error) {
-            console.error(`Error removing vector index for fileId ${fileId}:`, error);
+            Logger.error(`Error removing vector index for fileId ${fileId}:`, error);
             throw error; // Re-throw to indicate failure
         }
     }

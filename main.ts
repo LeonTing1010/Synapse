@@ -44,10 +44,8 @@ export default class SynapsePlugin extends Plugin {
     async initializeComponents() {
         // Initialize AIModelManager first as others depend on it (indirectly via settings/config)
         // Pass the plugin directory to AIModelManager
-        // 获取 vault 根目录
-        const vaultBase = (this.app.vault.adapter as any).basePath as string;
-        // 拼接插件目录
-        const pluginDir = path.join(vaultBase, '.obsidian/plugins/synapse');
+        // Use app.vault.configDir instead of hardcoded path
+        const pluginDir = `${this.app.vault.configDir}/plugins/synapse`;
         this.modelManager = new AIModelManager(this.settings, pluginDir);
         await this.modelManager.initialize();
 

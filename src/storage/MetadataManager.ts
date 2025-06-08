@@ -1,14 +1,17 @@
-import { Vault, DataAdapter } from 'obsidian';
+import { Vault, DataAdapter, TAbstractFile, App } from 'obsidian';
 import { ExtractedMetadata } from '../types/AITypes';
 import { ensureParentDirectory, getFileId } from './StorageUtils';
+import { Logger } from '../utils/Logger';
 
 export class MetadataManager {
     private vault: Vault;
     private dataPath: string;
+    private app: App;
 
-    constructor(vault: Vault, dataPath: string) {
+    constructor(vault: Vault, dataPath: string, app: App) {
         this.vault = vault;
         this.dataPath = dataPath;
+        this.app = app;
     }
 
     async saveFileMetadata(filePath: string, metadata: ExtractedMetadata, embeddingChunkSize: number) {
@@ -33,7 +36,7 @@ export class MetadataManager {
 
             await this.vault.adapter.write(metadataPath, JSON.stringify(safeMetadata, null, 2));
         } catch (error) {
-            console.error(`Error saving metadata for ${filePath}:`, error);
+            Logger.error(`Error saving metadata for ${filePath}:`, error);
             throw error;
         }
     }
@@ -49,7 +52,7 @@ export class MetadataManager {
             const data = await this.vault.adapter.read(metadataPath);
             return JSON.parse(data) as ExtractedMetadata;
         } catch (error) {
-            console.error(`Error getting metadata for ${filePath}:`, error);
+            Logger.error(`Error getting metadata for ${filePath}:`, error);
             return null;
         }
     }
@@ -62,7 +65,7 @@ export class MetadataManager {
             const data = await this.vault.adapter.read(metadataPath);
             return JSON.parse(data) as ExtractedMetadata;
         } catch (error) {
-            console.error(`Error getting metadata for fileId ${fileId}:`, error);
+            Logger.error(`Error getting metadata for fileId ${fileId}:`, error);
             return null;
         }
     }
@@ -78,7 +81,7 @@ export class MetadataManager {
             const files = (await adapter.list(metadataDir)).files.filter(f => f.endsWith('.json'));
             return files.map(f => `${metadataDir}/${f.substring(f.lastIndexOf('/') + 1)}`);
         } catch (e) {
-            console.error(`Error listing metadata directory ${metadataDir}:`, e);
+            Logger.error(`Error listing metadata directory ${metadataDir}:`, e);
             return [];
         }
     }
@@ -89,18 +92,17 @@ export class MetadataManager {
         try {
             const exists = await adapter.exists(metadataPath);
             if (exists) {
-                const anyAdapter = adapter as any;
-                if (typeof anyAdapter.trash === 'function') {
-                    await anyAdapter.trash(metadataPath, true); // true: system trash
-                } else if (typeof anyAdapter.moveToSystemTrash === 'function') {
-                    await anyAdapter.moveToSystemTrash(metadataPath);
+                const abstractFile = this.vault.getAbstractFileByPath(metadataPath);
+                if (abstractFile) {
+                    await this.app.fileManager.trashFile(abstractFile);
                 } else {
-                    await adapter.remove(metadataPath); // fallback
+                    // Fallback to direct removal if file not found in vault
+                    await adapter.remove(metadataPath);
                 }
-                console.log(`[MetadataManager] Trashed metadata file: ${metadataPath}`);
+                Logger.debug(`[MetadataManager] Trashed metadata file: ${metadataPath}`);
             }
         } catch (e) {
-            console.error(`Error trashing metadata file ${metadataPath}:`, e);
+            Logger.error(`Error trashing metadata file ${metadataPath}:`, e);
             throw e;
         }
     }
@@ -115,27 +117,26 @@ export class MetadataManager {
                 for (const file of files) {
                     const fullPath = `${metadataDir}/${file.substring(file.lastIndexOf('/') + 1)}`;
                     try {
-                        const anyAdapter = adapter as any;
-                        if (typeof anyAdapter.trash === 'function') {
-                            await anyAdapter.trash(fullPath, true);
-                        } else if (typeof anyAdapter.moveToSystemTrash === 'function') {
-                            await anyAdapter.moveToSystemTrash(fullPath);
+                        const abstractFile = this.vault.getAbstractFileByPath(fullPath);
+                        if (abstractFile) {
+                            await this.app.fileManager.trashFile(abstractFile);
                         } else {
+                            // Fallback to direct removal if file not found in vault
                             await adapter.remove(fullPath);
                         }
-                        console.log(`[MetadataManager] Trashed metadata file: ${fullPath}`);
+                        Logger.debug(`[MetadataManager] Trashed metadata file: ${fullPath}`);
                     } catch (e) {
-                        console.error(`Error trashing metadata file ${fullPath}:`, e);
+                        Logger.error(`Error trashing metadata file ${fullPath}:`, e);
                     }
                 }
                 const remainingFiles = (await adapter.list(metadataDir)).files;
                 if (remainingFiles.length === 0) {
                     await adapter.rmdir(metadataDir, false);
-                    console.log(`[MetadataManager] Deleted empty metadata directory: ${metadataDir}`);
+                    Logger.debug(`[MetadataManager] Deleted empty metadata directory: ${metadataDir}`);
                 }
             }
         } catch (e) {
-            console.error(`Error trashing all metadata files in ${metadataDir}:`, e);
+            Logger.error(`Error trashing all metadata files in ${metadataDir}:`, e);
             throw e;
         }
     }

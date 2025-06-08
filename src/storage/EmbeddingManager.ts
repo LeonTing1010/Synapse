@@ -1,5 +1,6 @@
 import { Vault, DataAdapter } from 'obsidian';
 import { ensureParentDirectory, getFileId } from './StorageUtils';
+import { Logger } from '../utils/Logger';
 
 export class EmbeddingManager {
     private vault: Vault;
@@ -17,7 +18,7 @@ export class EmbeddingManager {
             await ensureParentDirectory(this.vault.adapter, embeddingsPath);
             await this.vault.adapter.write(embeddingsPath, JSON.stringify(embeddings, null, 2));
         } catch (error) {
-            console.error(`Error saving embeddings for ${filePath}:`, error);
+            Logger.error(`Error saving embeddings for ${filePath}:`, error);
             throw error;
         }
     }
@@ -35,7 +36,7 @@ export class EmbeddingManager {
             const data = await this.vault.adapter.read(embeddingsPath);
             return JSON.parse(data) as Record<number, number[]>;
         } catch (error) {
-            console.error(`Error getting embeddings for ${filePath}:`, error);
+            Logger.error(`Error getting embeddings for ${filePath}:`, error);
             return null;
         }
     }
@@ -48,7 +49,7 @@ export class EmbeddingManager {
             const data = await this.vault.adapter.read(embeddingsPath);
             return JSON.parse(data) as Record<number, number[]>;
         } catch (error) {
-            console.error(`Error getting embeddings for fileId ${fileId}:`, error);
+            Logger.error(`Error getting embeddings for fileId ${fileId}:`, error);
             return null;
         }
     }
@@ -63,7 +64,7 @@ export class EmbeddingManager {
             // We need to return full paths relative to the dataPath
             return files.map(f => `${embeddingsDir}/${f.substring(f.lastIndexOf('/') + 1)}`);
         } catch (e) {
-            console.error(`Error listing embeddings directory ${embeddingsDir}:`, e);
+            Logger.error(`Error listing embeddings directory ${embeddingsDir}:`, e);
             return [];
         }
     }
@@ -75,10 +76,10 @@ export class EmbeddingManager {
             const exists = await adapter.exists(embeddingsPath);
             if (exists) {
                 await adapter.remove(embeddingsPath);
-                 console.log(`[EmbeddingManager] Deleted embedding file: ${embeddingsPath}`);
+                Logger.log(`Deleted embedding file: ${embeddingsPath}`);
             }
         } catch (e) {
-            console.error(`Error deleting embedding file ${embeddingsPath}:`, e);
+            Logger.error(`Error deleting embedding file ${embeddingsPath}:`, e);
             throw e;
         }
     }
@@ -95,9 +96,9 @@ export class EmbeddingManager {
                     const fullPath = `${embeddingsDir}/${file.substring(file.lastIndexOf('/') + 1)}`;
                     try {
                         await adapter.remove(fullPath);
-                        console.log(`[EmbeddingManager] Deleted embedding file: ${fullPath}`);
+                        Logger.log(`Deleted embedding file: ${fullPath}`);
                     } catch (e) {
-                        console.error(`Error deleting embedding file ${fullPath}:`, e);
+                        Logger.error(`Error deleting embedding file ${fullPath}:`, e);
                         // Continue even if one file fails
                     }
                 }
@@ -105,11 +106,11 @@ export class EmbeddingManager {
                 const remainingFiles = (await adapter.list(embeddingsDir)).files;
                 if (remainingFiles.length === 0) {
                     await adapter.rmdir(embeddingsDir, false);
-                    console.log(`[EmbeddingManager] Deleted empty embeddings directory: ${embeddingsDir}`);
+                    Logger.log(`Deleted empty embeddings directory: ${embeddingsDir}`);
                 }
             }
         } catch (e) {
-            console.error(`Error deleting all embedding files in ${embeddingsDir}:`, e);
+            Logger.error(`Error deleting all embedding files in ${embeddingsDir}:`, e);
             throw e;
         }
     }
